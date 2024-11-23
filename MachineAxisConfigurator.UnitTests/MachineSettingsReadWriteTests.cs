@@ -10,9 +10,10 @@ using MachineAxisConfigurator.Models;
 namespace MachineAxisConfigurator.UnitTests
 {
     [TestFixture]
-    public class MachineSettingsDeserializationTests
+    public class MachineSettingsReadWriteTests
     {
 
+        #region Reading Machine Settings
         [Test]
         public void Deserialize_ValidXml_ReturnsCorrectMachineSettings()
 
@@ -98,6 +99,9 @@ namespace MachineAxisConfigurator.UnitTests
             Assert.That(ex.Message, Does.Contain("There is an error in XML document"), "Expected specific exception message about XML error.");
         }
 
+        #endregion Reading Machine Settings
+
+
     }
-    }
+}
 
