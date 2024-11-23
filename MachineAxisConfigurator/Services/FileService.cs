@@ -10,9 +10,9 @@ using System.Xml.Serialization;
 
 namespace MachineAxisConfigurator.Services
 {
-    public class FileService : IFileService
+    public class FileService
     {
-        private string GetFilePath()
+        public string GetFilePath()
         {
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
@@ -29,16 +29,35 @@ namespace MachineAxisConfigurator.Services
         }
 
 
-        public MachineSettings LoadXml()
+        public T DeserializeXml<T>(string filePath) where T : class
         {
-            string path = GetFilePath();
-            if (string.IsNullOrEmpty(path)) return null;
-
-            XmlSerializer serializer = new XmlSerializer(typeof(MachineSettings));
-            using (StreamReader reader = new StreamReader(path))
+            if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath))
             {
-                return (MachineSettings)serializer.Deserialize(reader);
+                throw new FileNotFoundException("The specified file path does not exist.");
+            }
+
+            XmlSerializer serializer = new XmlSerializer(typeof(T));
+            using (StreamReader reader = new StreamReader(filePath))
+            {
+                return (T)serializer.Deserialize(reader);
             }
         }
+
+
+        public void SerializeXml<T>(T data, string filePath) where T : class
+        {
+            if (string.IsNullOrEmpty(filePath))
+            {
+                throw new ArgumentException("File path cannot be null or empty.");
+            }
+
+            XmlSerializer serializer = new XmlSerializer(typeof(T));
+            using (StreamWriter writer = new StreamWriter(filePath))
+            {
+                serializer.Serialize(writer, data);
+            }
+        }
+
+
     }
 }

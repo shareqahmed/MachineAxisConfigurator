@@ -43,7 +43,7 @@
 
         <!-- DataGrid to display machine settings -->
         <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding MachineSettings.Axes}"
-          SelectedItem="{Binding SelectedAxis}" Margin="10"
+          SelectedItem="{Binding SelectedAxis}" Margin="10" CanUserAddRows="False"
           Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Axis Name" Binding="{Binding Name}" Width="*" />
@@ -54,7 +54,7 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <Button Content="Edit" Command="{Binding DataContext.EditCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" CommandParameter="{Binding}" Margin="2"/>
+                                <Button Content="Edit" Command="{Binding DataContext.OpenEditWindowCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" CommandParameter="{Binding}" Margin="2"/>
                                 <Button Content="Delete" Command="{Binding DataContext.DeleteAxisCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" CommandParameter="{Binding}" Margin="2"/>
                             </StackPanel>
                         </DataTemplate>

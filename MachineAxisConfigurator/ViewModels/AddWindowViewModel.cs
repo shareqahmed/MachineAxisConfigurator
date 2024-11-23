@@ -13,7 +13,7 @@ namespace MachineAxisConfigurator.ViewModels
     {
         public event Action<Axis> OnAxisAdded;
         public ICommand SaveCommand { get; private set; }
-
+        public Axis AxisToAdd { get; private set; } = new Axis();
         public AddWindowViewModel()
         {
             SaveCommand = new RelayCommand(SaveAxis);
@@ -22,68 +22,12 @@ namespace MachineAxisConfigurator.ViewModels
         private void SaveAxis()
         {
 
-            Axis newAxis = new Axis
-            {
-                Name = AxisName,
-                MinValue = MinValue,
-                MaxValue = MaxValue
-            };
+            Axis newAxis = AxisToAdd;
 
             // Invoke the event
             OnAxisAdded?.Invoke(newAxis);
 
         }
 
-
-        private string _axisName;
-        public string AxisName
-        {
-            get
-            {
-                return _axisName;
-            }
-            set
-            {
-                if (_axisName != value)
-                {
-                    _axisName = value;
-                    OnPropertyChanged(nameof(AxisName));
-                }
-            }
-        }
-
-        private float _minValue;
-        public float MinValue
-        {
-            get
-            {
-                return _minValue;
-            }
-            set
-            {
-                if (_minValue != value)
-                {
-                    _minValue = value;
-                    OnPropertyChanged(nameof(MinValue));
-                }
-            }
-        }
-
-        private float _maxValue;
-        public float MaxValue
-        {
-            get
-            {
-                return _maxValue;
-            }
-            set
-            {
-                if (_maxValue != value)
-                {
-                    _maxValue = value;
-                    OnPropertyChanged(nameof(MaxValue));
-                }
-            }
-        }
     }
 }

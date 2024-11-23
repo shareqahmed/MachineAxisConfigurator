@@ -5,8 +5,33 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MachineAxisConfigurator.Views"
         mc:Ignorable="d"
-        Title="EditWindow" Height="350" Width="450">
-    <Grid>
-        
+        Title="Edit Axis" Height="200" Width="400">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="30*" />
+            <ColumnDefinition Width="70*" />
+        </Grid.ColumnDefinitions>
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="Axis Name:" VerticalAlignment="Center"/>
+        <TextBox Text="{Binding EditableAxis.Name, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" Grid.Row="0" Grid.Column="1" Margin="0,5" />
+
+        <TextBlock Text="Axis Type:" Grid.Row="1" VerticalAlignment="Center" />
+        <TextBox Text="{Binding EditableAxis.Type, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="1" Margin="0,5" />
+
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="Minimum Value:" VerticalAlignment="Center" />
+        <TextBox Text="{Binding EditableAxis.MinValue, UpdateSourceTrigger=PropertyChanged}" Grid.Row="2" Grid.Column="1" Margin="0,5" />
+
+        <TextBlock Text="Maximum Value:" Grid.Row="3" VerticalAlignment="Center" />
+        <TextBox Text="{Binding EditableAxis.MaxValue, UpdateSourceTrigger=PropertyChanged}" Grid.Row="3" Grid.Column="1" Margin="0,5" />
+
+
+        <Button Content="Ok"  Click="OkButton_Click"
+            Grid.Column="1" Grid.Row="4" HorizontalAlignment="Right" Margin="0,10,0,0" Width="80" />
     </Grid>
 </Window>

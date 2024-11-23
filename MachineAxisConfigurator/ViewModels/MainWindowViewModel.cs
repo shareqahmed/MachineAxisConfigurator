@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Xml.Serialization;
 
@@ -20,20 +21,25 @@ namespace MachineAxisConfigurator.ViewModels
     public class MainWindowViewModel : INotifyPropertyChanged
     {
         public ICommand OpenAddWindowCommand { get; private set; }
+
+        public ICommand OpenEditWindowCommand { get; private set; }
         public ICommand LoadCommand { get; }
         public ICommand SaveCommand { get; }
 
         public ICommand DeleteAxisCommand { get; private set; }
 
+        private FileService fileService = new FileService();
         private string XmlPath { get; set; }
 
         public MainWindowViewModel()
         {
-            OpenAddWindowCommand = new RelayCommand(ExecuteOpenAddWindow);
-            LoadCommand = new RelayCommand(LoadXml);
-            SaveCommand = new RelayCommand(SaveXml);
 
+            LoadCommand = new RelayCommand(LoadMachineSettings);
+            SaveCommand = new RelayCommand(SaveMachineSettings);
+            OpenAddWindowCommand = new RelayCommand(ExecuteOpenAddWindow);
+            OpenEditWindowCommand = new RelayCommand(EditAxis, CanEditAxis);
             DeleteAxisCommand = new RelayCommand(DeleteAxis, CanDeleteAxis);
+
         }
 
 
@@ -84,54 +90,32 @@ namespace MachineAxisConfigurator.ViewModels
         {
             return SelectedAxis != null;
         }
-        private void LoadXml()
+       
+        
+        private void LoadMachineSettings()
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "XML Files (*.xml)|*.xml";
-            openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+          
+           XmlPath = fileService.GetFilePath();
 
-            bool? result = openFileDialog.ShowDialog();
-
-
-            if (result == true)
-            {
-                XmlPath = openFileDialog.FileName;
-
-                try
-                {
-                    XmlSerializer serializer = new XmlSerializer(typeof(MachineSettings));
-                    using (StreamReader reader = new StreamReader(XmlPath))
-                    {
-                        MachineSettings = (MachineSettings)serializer.Deserialize(reader);
-                    }
+            try                
+                {               
+                    MachineSettings = fileService.DeserializeXml<MachineSettings>(XmlPath);
                     MessageBox.Show("File loaded successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-
                 }
-                catch (Exception ex) 
+
+            catch (Exception ex) 
                 {
                     MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
-                }
-
-            }
+                }            
         }
 
 
-        private void SaveXml()
+        private void SaveMachineSettings()
         {
-
-            if (string.IsNullOrEmpty(XmlPath))
-            {
-                return;
-            }
-
             try
             {
-                XmlSerializer serializer = new XmlSerializer(typeof(MachineSettings));
-                using (StreamWriter writer = new StreamWriter(XmlPath))
-                {
-                    serializer.Serialize(writer, MachineSettings);
-                }
+                fileService.SerializeXml(MachineSettings, XmlPath);
                 MessageBox.Show("File saved successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
 
             }
@@ -141,20 +125,6 @@ namespace MachineAxisConfigurator.ViewModels
             }
 
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -182,6 +152,50 @@ namespace MachineAxisConfigurator.ViewModels
                 MessageBox.Show("New axis added successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
+
+
+
+
+        private void EditAxis()
+        {
+            if (SelectedAxis != null && MachineSettings.Axes.Contains(SelectedAxis))
+            {
+                ExecuteOpenEditWindow(SelectedAxis);
+            }
+        }
+
+        private bool CanEditAxis()
+        {
+            return SelectedAxis != null;
+        }
+
+        private void ExecuteOpenEditWindow(Axis selectedAxis)
+        {
+            EditWindowViewModel viewModel = new EditWindowViewModel(selectedAxis);
+            viewModel.OnAxisEdited += UpdateAxisToMachineSettings;
+            EditWindow editWindow = new EditWindow
+            {
+                DataContext = viewModel
+            };
+            editWindow.Show();
+        }
+
+        public void UpdateAxisToMachineSettings(Axis updatedAxis)
+        {
+            var axis = MachineSettings.Axes.FirstOrDefault(a => a.Name == updatedAxis.Name);
+            
+            if (axis != null)
+            {
+                axis.Type = updatedAxis.Type;
+                axis.MinValue = updatedAxis.MinValue;
+                axis.MaxValue = updatedAxis.MaxValue;
+                OnPropertyChanged(nameof(MachineSettings));
+                MessageBox.Show("An axis has been edited.", "Error", MessageBoxButton.OK, MessageBoxImage.Information);
+
+            }
+        }
+
+
 
 
         public event PropertyChangedEventHandler PropertyChanged;
