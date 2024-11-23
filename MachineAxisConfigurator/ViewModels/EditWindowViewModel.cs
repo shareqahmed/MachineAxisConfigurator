@@ -22,7 +22,6 @@ namespace MachineAxisConfigurator.ViewModels
             SaveCommand = new RelayCommand(EditAxis);
         }
 
-
         private void EditAxis()
         {
             OnAxisEdited?.Invoke(EditableAxis);

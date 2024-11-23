@@ -25,13 +25,13 @@
         <TextBox Text="{Binding EditableAxis.Type, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="1" Margin="0,5" />
 
         <TextBlock Grid.Row="2" Grid.Column="0" Text="Minimum Value:" VerticalAlignment="Center" />
-        <TextBox Text="{Binding EditableAxis.MinValue, UpdateSourceTrigger=PropertyChanged}" Grid.Row="2" Grid.Column="1" Margin="0,5" />
+        <TextBox Text="{Binding EditableAxis.MinValue, UpdateSourceTrigger=PropertyChanged, StringFormat=F1}" Grid.Row="2" Grid.Column="1" Margin="0,5" />
 
         <TextBlock Text="Maximum Value:" Grid.Row="3" VerticalAlignment="Center" />
-        <TextBox Text="{Binding EditableAxis.MaxValue, UpdateSourceTrigger=PropertyChanged}" Grid.Row="3" Grid.Column="1" Margin="0,5" />
+        <TextBox Text="{Binding EditableAxis.MaxValue, UpdateSourceTrigger=PropertyChanged, StringFormat=F1}" Grid.Row="3" Grid.Column="1" Margin="0,5" />
 
 
-        <Button Content="Ok"  Click="OkButton_Click"
+        <Button Content="Ok"  Click="Ok_Button_Click"
             Grid.Column="1" Grid.Row="4" HorizontalAlignment="Right" Margin="0,10,0,0" Width="80" />
     </Grid>
 </Window>

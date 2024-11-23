@@ -36,10 +36,17 @@ namespace MachineAxisConfigurator.Services
                 throw new FileNotFoundException("The specified file path does not exist.");
             }
 
-            XmlSerializer serializer = new XmlSerializer(typeof(T));
-            using (StreamReader reader = new StreamReader(filePath))
+            try
             {
-                return (T)serializer.Deserialize(reader);
+                XmlSerializer serializer = new XmlSerializer(typeof(T));
+                using (StreamReader reader = new StreamReader(filePath))
+                {
+                    return (T)serializer.Deserialize(reader);
+                }
+            }
+            catch (Exception ex)
+            {
+             throw new InvalidOperationException(ex.Message);
             }
         }
 
@@ -50,11 +57,18 @@ namespace MachineAxisConfigurator.Services
             {
                 throw new ArgumentException("File path cannot be null or empty.");
             }
-
-            XmlSerializer serializer = new XmlSerializer(typeof(T));
-            using (StreamWriter writer = new StreamWriter(filePath))
+            try
             {
-                serializer.Serialize(writer, data);
+                XmlSerializer serializer = new XmlSerializer(typeof(T));
+                using (StreamWriter writer = new StreamWriter(filePath))
+                {
+                    serializer.Serialize(writer, data);
+                }
+            }
+
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException(ex.Message);
             }
         }
 

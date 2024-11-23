@@ -21,35 +21,33 @@ namespace MachineAxisConfigurator.ViewModels
     public class MainWindowViewModel : INotifyPropertyChanged
     {
         public ICommand OpenAddWindowCommand { get; private set; }
-
         public ICommand OpenEditWindowCommand { get; private set; }
         public ICommand LoadCommand { get; }
         public ICommand SaveCommand { get; }
-
         public ICommand DeleteAxisCommand { get; private set; }
 
         private FileService fileService = new FileService();
         private string XmlPath { get; set; }
 
+        #region Constructor
         public MainWindowViewModel()
         {
-
             LoadCommand = new RelayCommand(LoadMachineSettings);
             SaveCommand = new RelayCommand(SaveMachineSettings);
             OpenAddWindowCommand = new RelayCommand(ExecuteOpenAddWindow);
             OpenEditWindowCommand = new RelayCommand(EditAxis, CanEditAxis);
             DeleteAxisCommand = new RelayCommand(DeleteAxis, CanDeleteAxis);
-
         }
+        #endregion Constructor
 
 
-        private MachineSettings _machineSettings = new MachineSettings();  
+        private MachineSettings _machineSettings = new MachineSettings();
         public MachineSettings MachineSettings
         {
-            get 
+            get
             {
                 return _machineSettings;
-            } 
+            }
             set
             {
                 if (_machineSettings != value)
@@ -63,10 +61,10 @@ namespace MachineAxisConfigurator.ViewModels
         private Axis _selectedAxis;
         public Axis SelectedAxis
         {
-            get 
-            { 
+            get
+            {
                 return _selectedAxis;
-            } 
+            }
             set
             {
                 if (_selectedAxis != value)
@@ -78,6 +76,46 @@ namespace MachineAxisConfigurator.ViewModels
         }
 
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+
+        #region Load and Save Machine Settings
+        private void LoadMachineSettings()
+        {
+            XmlPath = fileService.GetFilePath();
+            try
+            {
+                MachineSettings = fileService.DeserializeXml<MachineSettings>(XmlPath);
+                MessageBox.Show("File loaded successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void SaveMachineSettings()
+        {
+            try
+            {
+                fileService.SerializeXml(MachineSettings, XmlPath);
+                MessageBox.Show("File saved successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        #endregion Load and Save Machine Settings
+
+
+        #region Delete Axis
         private void DeleteAxis()
         {
             if (SelectedAxis != null && MachineSettings.Axes.Contains(SelectedAxis))
@@ -90,44 +128,11 @@ namespace MachineAxisConfigurator.ViewModels
         {
             return SelectedAxis != null;
         }
-       
-        
-        private void LoadMachineSettings()
-        {
-          
-           XmlPath = fileService.GetFilePath();
 
-            try                
-                {               
-                    MachineSettings = fileService.DeserializeXml<MachineSettings>(XmlPath);
-                    MessageBox.Show("File loaded successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-
-            catch (Exception ex) 
-                {
-                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                }            
-        }
+        #endregion Delete Axis
 
 
-        private void SaveMachineSettings()
-        {
-            try
-            {
-                fileService.SerializeXml(MachineSettings, XmlPath);
-                MessageBox.Show("File saved successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-
-        }
-
-
-
+        #region Add Axis
         private void ExecuteOpenAddWindow()
         {
             AddWindowViewModel viewModel = new AddWindowViewModel();
@@ -153,9 +158,10 @@ namespace MachineAxisConfigurator.ViewModels
             }
         }
 
+        #endregion Add Axis
 
 
-
+        #region Edit Axis
         private void EditAxis()
         {
             if (SelectedAxis != null && MachineSettings.Axes.Contains(SelectedAxis))
@@ -195,14 +201,6 @@ namespace MachineAxisConfigurator.ViewModels
             }
         }
 
-
-
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void OnPropertyChanged(string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+        #endregion Edit Axis 
     }
 }

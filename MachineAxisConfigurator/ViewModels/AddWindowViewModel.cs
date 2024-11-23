@@ -21,12 +21,8 @@ namespace MachineAxisConfigurator.ViewModels
 
         private void SaveAxis()
         {
-
             Axis newAxis = AxisToAdd;
-
-            // Invoke the event
-            OnAxisAdded?.Invoke(newAxis);
-
+            OnAxisAdded?.Invoke(newAxis);         
         }
 
     }
