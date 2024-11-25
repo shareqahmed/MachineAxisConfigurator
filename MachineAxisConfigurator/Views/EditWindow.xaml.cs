@@ -24,7 +24,7 @@ namespace MachineAxisConfigurator.Views
             InitializeComponent();
         }
 
-        private void Ok_Button_Click(object sender, RoutedEventArgs e)
+        private void OkButtonClick(object sender, RoutedEventArgs e)
         {
             this.Close(); 
         }
