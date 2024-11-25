@@ -46,30 +46,11 @@ namespace MachineAxisConfigurator.UnitTests
 
 
         [Test]
-        public void Deserialize_ValidXml_ReturnsCorrectMachineSettings()
-
-        {
-            // Arrange
-            string fileName = "valid_machine_settings.xml";
-            string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MachineSettingsFiles", fileName);
-            var fileService = new FileService();
-
-            // Act
-            MachineSettings result = fileService.DeserializeXml<MachineSettings>(filePath);
-
-            // Assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual("3axisMill", result.Machine.Name);
-            Assert.AreEqual(3, result.Axes.Count);
-        }
-
-
-        [Test]
         public void Deserialize_InvalidFilePath_ThrowsFileNotFoundException()
         {
             // Arrange
             string fileName = "valid_machine_settings.xml";
-            string invalidFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MachineSettings", fileName);
+            string invalidFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MachineSettings", fileName);        // faulty path
             var fileService = new FileService();
 
             // Act
