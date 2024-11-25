@@ -4,7 +4,7 @@
              xmlns:local="clr-namespace:MachineAxisConfigurator"
              xmlns:views="clr-namespace:MachineAxisConfigurator.Views" 
               xmlns:viewmodels="clr-namespace:MachineAxisConfigurator.ViewModels"
-             StartupUri="Views/MainWindow.xaml">
+             >
     <Application.Resources>
          
     </Application.Resources>

@@ -20,18 +20,20 @@ namespace MachineAxisConfigurator.ViewModels
 {
     public class MainWindowViewModel : INotifyPropertyChanged
     {
+        private IFileService _fileService;
         public ICommand OpenAddWindowCommand { get; private set; }
         public ICommand OpenEditWindowCommand { get; private set; }
         public ICommand LoadCommand { get; }
         public ICommand SaveCommand { get; }
         public ICommand DeleteAxisCommand { get; private set; }
 
-        private FileService fileService = new FileService();
+        //private FileService fileService = new FileService();
         private string XmlPath { get; set; }
 
         #region Constructor
-        public MainWindowViewModel()
+        public MainWindowViewModel(IFileService fileService)
         {
+            _fileService = fileService;
             LoadCommand = new RelayCommand(LoadMachineSettings);
             SaveCommand = new RelayCommand(SaveMachineSettings);
             OpenAddWindowCommand = new RelayCommand(ExecuteOpenAddWindow);
@@ -87,10 +89,10 @@ namespace MachineAxisConfigurator.ViewModels
         #region Load and Save Machine Settings
         private void LoadMachineSettings()
         {
-            XmlPath = fileService.GetFilePath();
+            XmlPath = _fileService.GetFilePath();
             try
             {
-                MachineSettings = fileService.DeserializeXml<MachineSettings>(XmlPath);
+                MachineSettings = _fileService.DeserializeXml<MachineSettings>(XmlPath);
                 MessageBox.Show("File loaded successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
@@ -103,7 +105,7 @@ namespace MachineAxisConfigurator.ViewModels
         {
             try
             {
-                fileService.SerializeXml(MachineSettings, XmlPath);
+                _fileService.SerializeXml(MachineSettings, XmlPath);
                 MessageBox.Show("File saved successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)

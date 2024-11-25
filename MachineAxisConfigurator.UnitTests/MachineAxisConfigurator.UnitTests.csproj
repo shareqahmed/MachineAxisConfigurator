@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0-windows</TargetFramework>
@@ -23,6 +23,18 @@
 
   <ItemGroup>
     <Using Include="NUnit.Framework" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="MachineSettingsFiles\machine_settings_axis_minvalue_string_error.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MachineSettingsFiles\valid_machine_settings.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MachineSettingsFiles\valid_machine_settings_to_modify.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

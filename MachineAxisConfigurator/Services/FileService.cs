@@ -10,7 +10,7 @@ using System.Xml.Serialization;
 
 namespace MachineAxisConfigurator.Services
 {
-    public class FileService
+    public class FileService : IFileService
     {
         public string GetFilePath()
         {
@@ -46,7 +46,7 @@ namespace MachineAxisConfigurator.Services
             }
             catch (Exception ex)
             {
-             throw new InvalidOperationException(ex.Message);
+                throw new InvalidOperationException(ex.Message);
             }
         }
 

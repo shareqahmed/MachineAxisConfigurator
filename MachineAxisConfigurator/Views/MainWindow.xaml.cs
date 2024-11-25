@@ -21,11 +21,11 @@ namespace MachineAxisConfigurator.Views
     /// </summary>
     public partial class MainWindow : Window
     {
-
-        public MainWindow()
+        public MainWindow(IFileService fileService)
         {
             InitializeComponent();
-            DataContext = new MainWindowViewModel();
+            
+            DataContext = new MainWindowViewModel(fileService);
         }
     }
 }

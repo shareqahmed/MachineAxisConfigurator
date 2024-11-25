@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MachineSettings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Machine Name="3D Axis Mill Works" Type="Mill" />
+  <Axes>
+    <Axis Name="X" Type="Translation" MinValue="abc" MaxValue="100" />
+    <Axis Name="Y" Type="Translation" MinValue="-100" MaxValue="100" />
+    <Axis Name="Z" Type="Translation" MinValue="-100.1" MaxValue="100.1" />
+  </Axes>
+</MachineSettings>

@@ -43,7 +43,7 @@
             <Button Content="Add" Command="{Binding OpenAddWindowCommand}" Width="60" Margin="10" />
         </StackPanel>
 
-        <!-- DataGrid to display machine settings -->
+        <!-- DataGrid -->
         <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding MachineSettings.Axes}"
           SelectedItem="{Binding SelectedAxis}" Margin="10" CanUserAddRows="False"
           Grid.Row="4" Grid.ColumnSpan="3">
@@ -64,8 +64,5 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
-
-
     </Grid>
-
 </Window>

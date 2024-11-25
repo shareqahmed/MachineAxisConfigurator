@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using MachineAxisConfigurator;
 using MachineAxisConfigurator.Models;
+using MachineAxisConfigurator.Services;
 
 namespace MachineAxisConfigurator.UnitTests
 {
@@ -13,63 +15,73 @@ namespace MachineAxisConfigurator.UnitTests
     public class MachineSettingsReadWriteTests
     {
 
-        #region Reading Machine Settings
+        [Test]
+        public void ReadWrite_MachineSettingsFile_ShouldPreserveData()
+        {
+            // Arrange
+            string fileName = "valid_machine_settings_to_modify.xml";
+            string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MachineSettingsFiles", fileName);
+            var fileService = new FileService();
+
+            // Act
+            var originalSettings = fileService.DeserializeXml<MachineSettings>(filePath);
+            var newAxis = new Axis { Name = "Z", Type = "Translation", MinValue = (float)-10.1, MaxValue = (float)10.1 };
+            originalSettings.Axes.Add(newAxis);
+
+            // Act
+            fileService.SerializeXml(originalSettings, filePath);
+            var deserializedSettings = fileService.DeserializeXml<MachineSettings>(filePath);
+
+            // Assert
+            Assert.IsNotNull(deserializedSettings);
+            Assert.AreEqual("3axisMill", deserializedSettings.Machine.Name);
+            Assert.AreEqual(4, deserializedSettings.Axes.Count);
+            Assert.AreEqual("Z", deserializedSettings.Axes[3].Name);
+            Assert.AreEqual((float)-10.1, deserializedSettings.Axes[3].MinValue);
+            Assert.AreEqual((float)10.1, deserializedSettings.Axes[3].MaxValue);
+
+            if (File.Exists(filePath))
+                File.Delete(filePath);
+        }
+
+
         [Test]
         public void Deserialize_ValidXml_ReturnsCorrectMachineSettings()
 
         {
             // Arrange
-            string xmlInput = @"<?xml version='1.0' encoding='utf-8'?>
-                                <MachineSettings>
-                                    <Machine Name='3D Axis Mill Works' Type='Mill' />
-                                    <Axes>
-                                        <Axis Name='X' Type='Translation' MinValue='-100' MaxValue='100' />
-                                        <Axis Name='Y' Type='Translation' MinValue='-100' MaxValue='100' />
-                                    </Axes>
-                                </MachineSettings>";
+            string fileName = "valid_machine_settings.xml";
+            string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MachineSettingsFiles", fileName);
+            var fileService = new FileService();
 
-            var serializer = new XmlSerializer(typeof(MachineSettings));
-            
             // Act
-            MachineSettings result;
-            using (TextReader reader = new StringReader(xmlInput))
-            {
-                result = (MachineSettings)serializer.Deserialize(reader);
-            }
+            MachineSettings result = fileService.DeserializeXml<MachineSettings>(filePath);
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual("3D Axis Mill Works", result.Machine.Name);
-            Assert.AreEqual(2, result.Axes.Count);
+            Assert.AreEqual("3axisMill", result.Machine.Name);
+            Assert.AreEqual(3, result.Axes.Count);
         }
-
 
 
         [Test]
-        public void Deserialize_MalformedXml_ThrowsException()
+        public void Deserialize_InvalidFilePath_ThrowsFileNotFoundException()
         {
             // Arrange
-            string malformedXml = @"<MachineSettings>
-                                    <Machine Name='3D Axis Mill Works' Type='Mill'>
-                                    <Axes>
-                                        <Axis Name='X' Type='Translation' MinValue='-100' MaxValue='100' />
-                                    </Axes>
-                                </MachineSettings>";
+            string fileName = "valid_machine_settings.xml";
+            string invalidFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MachineSettings", fileName);
+            var fileService = new FileService();
 
-            var serializer = new XmlSerializer(typeof(MachineSettings));
-
-            // Act 
-            var ex = Assert.Throws<InvalidOperationException>(() =>
+            // Act
+            var ex = Assert.Throws<FileNotFoundException>(() =>
             {
-                using (TextReader reader = new StringReader(malformedXml))
-                {
-                    var result = (MachineSettings)serializer.Deserialize(reader);
-                }
+                MachineSettings result = fileService.DeserializeXml<MachineSettings>(invalidFilePath);
             });
 
             // Assert
-            Assert.That(ex.Message, Does.Contain("There is an error in XML document")); // Check if the error message contains specific details about the malformed part
+            Assert.That(ex.Message, Does.Contain("The specified file path does not exist."));  
         }
+
 
 
 
@@ -77,31 +89,19 @@ namespace MachineAxisConfigurator.UnitTests
         public void Deserialize_CorruptXml_WithStringMinValue_ThrowsException()
         {
             // Arrange
-            string corruptXml = @"<MachineSettings>
-                                    <Machine Name='3D Axis Mill Works' Type='Mill'>
-                                     <Axes>
-                                        <Axis Name='X' Type='Translation' MinValue='abc' MaxValue='100' /> <!-- Non-numeric MinValue -->
-                                     </Axes>
-                                   </MachineSettings>";
-
-            var serializer = new XmlSerializer(typeof(MachineSettings));
+            string fileName = "machine_settings_axis_minvalue_string_error.xml";
+            string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MachineSettingsFiles", fileName);
+            var fileService = new FileService();
 
             // Act
             var ex = Assert.Throws<InvalidOperationException>(() =>
             {
-                using (var reader = new StringReader(corruptXml))
-                {
-                    var result = (MachineSettings)serializer.Deserialize(reader);
-                }
+                MachineSettings result = fileService.DeserializeXml<MachineSettings>(filePath);
             });
 
             // Assert
-            Assert.That(ex.Message, Does.Contain("There is an error in XML document"), "Expected specific exception message about XML error.");
+            Assert.That(ex.Message, Does.Contain("There is an error in XML document"));
         }
-
-        #endregion Reading Machine Settings
-
-
     }
 }
 
